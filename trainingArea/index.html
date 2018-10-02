@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<script type="text/javascript" src="synaptic.min.js"></script>
+	<script type="text/javascript" src="mysyn.js"></script>
+	<script type="text/javascript">	
+		var net;
+		var learning_history;
+		function learn(){
+			console.log('learn()');
+			// get attributes
+			netlen = "netlen = ["+document.getElementById('netlen').value+"];";
+			loops = "loops = "+document.getElementById('loops').value+";";
+			rate = "rate = "+document.getElementById('rate').value+";";
+			var res = document.getElementById('inpmatx').value.replace(/\n/g, "],[");
+			inpmatx = "inpmatx = [["+res+"]];";
+			var res = document.getElementById('outmatx').value.replace(/\n/g, "],[");
+			outmatx = "outmatx = [["+res+"]];";
+			appendBody('script', netlen);
+			appendBody('script', loops);
+			appendBody('script', rate);
+			appendBody('script', inpmatx);
+			appendBody('script', outmatx);
+
+			// initiate a network element
+			var myNetwork = newNetwork(netlen);
+
+			// train it
+			learning_history = learnBPP( net = myNetwork,
+				inputs = inpmatx,
+				outputs = outmatx,
+				loops = loops,
+				learningRate = rate);
+			return myNetwork;
+		}
+
+		function tryit(n){
+			console.log('tryit('+n+')');
+			var tryit_act =  "try_val = ["+document.getElementById('tryit').value+"];";
+			appendBody('script', tryit_act);
+
+			var res = n.activate(try_val);
+			console.log(try_val);
+			console.log(res);
+			document.getElementById('res').value = res;
+		}
+
+		function normalizedata(elem, target) {
+			console.log('normalizedata('+elem+','+target+')');
+			elem = document.getElementById(elem).value;
+			var res = elem.replace(/\n/g, "],[");
+			var dtx = "datamatrix = [["+res+"]];";
+			appendBody('script', dtx);
+			var maxincolumn = [];
+			for (var i = 0; i < datamatrix[0].length; i++){
+				maxincolumn.push(datamatrix[0][i]);
+			}
+			var minincolumn = [];
+			for (var i = 0; i < datamatrix[0].length; i++){
+				minincolumn.push(datamatrix[0][i]);
+			}
+
+			for (var i = 0; i < datamatrix.length; i++) {
+				for (var j = 0; j < datamatrix[0].length; j++) {
+					if(datamatrix[i][j] > maxincolumn[j]) {
+						// Max value from each column
+						maxincolumn[j] = datamatrix[i][j];
+					}
+					if(datamatrix[i][j] < minincolumn[j]) {
+						// Min value from each column
+						minincolumn[j] = datamatrix[i][j];
+					}
+				}
+			}
+			// Normalize the data
+			for (var i = 0; i < datamatrix.length; i++) {
+				for (var j = 0; j < datamatrix[i].length; j++) {
+					xi = datamatrix[i][j];
+					datamatrix[i][j] = (xi - minincolumn[j])/(maxincolumn[j]-minincolumn[j]);
+				}
+			}
+			// Write into target textarea
+			document.getElementById(target).value = "";
+			for (var i = 0; i < datamatrix.length; i++) {
+				if (i != 0) {
+					document.getElementById(target).value += "\n";
+				} 
+				for (var j = 0; j < datamatrix[i].length; j++) {
+					document.getElementById(target).value += datamatrix[i][j];
+					if (j < datamatrix[i].length-1){
+						document.getElementById(target).value += ",";
+					}
+					//xi = datamatrix[i][j];
+					//datamatrix[i][j] = (xi - minincolumn[j])/(maxincolumn[j]-minincolumn[j]);
+				}
+			}
+		}
+
+		function appendBody(elem, content) {
+			console.log('appendBody('+elem+','+content+')');
+		    var node = document.createElement(elem);
+		    var textnode = document.createTextNode(content);
+		    node.appendChild(textnode);
+		    document.body.appendChild(node);
+		}
+	</script>
+</head>
+<body>
+<h1>Synaptic</h1>
+<h2>MLP - Backpropagate Room</h2>
+Network Lengths
+<br />
+<input type="text" name="" value="2,3,1" id="netlen">
+<br />
+
+<h3> Normalize your numerical data</h3>
+Input matrix
+<br />
+<textarea rows="4" cols="20" id="inpnotnorm">
+0,0
+0,10
+10,0
+10,10</textarea>
+<button onclick="normalizedata('inpnotnorm','inpmatx');">Normalize</button>
+<br />
+
+Desired Outputs Matrix
+<br />
+<textarea rows="4" cols="20" id="outnotnorm">
+0
+10
+10
+0</textarea>
+<button onclick="normalizedata('outnotnorm','outmatx');">Normalize</button>
+<br />
+
+<h3> Training dataset</h3>
+Input matrix
+<br />
+<textarea rows="4" cols="20" id="inpmatx">
+0,0
+0,1
+1,0
+1,1</textarea>
+
+<br />
+
+
+Desired Outputs Matrix
+
+<br />
+<textarea rows="4" cols="20" id="outmatx">
+0
+1
+1
+0</textarea>
+
+<br />
+
+
+<p>Increasing layers and neurons -> increase loop and learning rate;</p>
+<br />
+Loops
+<input type="text" name="" value="20000" id="loops">
+Learning Rate
+<input type="text" name="" value="0.03" id="rate">
+
+<button onclick="net = learn();">Learn!</button>
+<br />
+
+<h4>Test your Network</h4>
+<input type="text" name="" value="0,1" id="tryit">
+<button onclick="tryit(net);">Try it!</button>
+Result
+<input type="text" name="" value="" id="res">
+
+</body>
+</html>

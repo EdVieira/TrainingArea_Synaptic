@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<script type="text/javascript" src="synaptic.min.js"></script>
+	<script type="text/javascript" src="mysyn.js"></script>
+	<script type="text/javascript">	
+		// initiate a network element
+		var myNetwork = newNetwork([2,2,1]);
+
+		// train it
+		learnBPP( net = myNetwork,
+			inputs = [[0,0],[0,1],[1,0],[1,1]],
+			outputs = [[0],[1],[1],[0]]);
+	</script>
+</head>
+<body>
+x1
+<input type="text" name="x1" id="x1">
+<br />
+x2
+<input type="text" name="x2" id="x2">
+<button onclick="console.log(myNetwork.activate(
+[parseFloat(document.getElementById('x1').value),
+parseFloat(document.getElementById('x2').value)])
+); alert(myNetwork.activate(
+[parseFloat(document.getElementById('x1').value),
+parseFloat(document.getElementById('x2').value)]))
+">Go!</button>
+<br />
+</body>
+</html>
