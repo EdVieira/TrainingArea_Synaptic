@@ -1,179 +1,163 @@
 <!DOCTYPE html>
-<html>
-<head>
-	<title></title>
-	<script type="text/javascript" src="synaptic.min.js"></script>
-	<script type="text/javascript" src="mysyn.js"></script>
-	<script type="text/javascript">	
-		var net;
-		var learning_history;
-		function learn(){
-			console.log('learn()');
-			// get attributes
-			netlen = "netlen = ["+document.getElementById('netlen').value+"];";
-			loops = "loops = "+document.getElementById('loops').value+";";
-			rate = "rate = "+document.getElementById('rate').value+";";
-			var res = document.getElementById('inpmatx').value.replace(/\n/g, "],[");
-			inpmatx = "inpmatx = [["+res+"]];";
-			var res = document.getElementById('outmatx').value.replace(/\n/g, "],[");
-			outmatx = "outmatx = [["+res+"]];";
-			appendBody('script', netlen);
-			appendBody('script', loops);
-			appendBody('script', rate);
-			appendBody('script', inpmatx);
-			appendBody('script', outmatx);
+<html lang="pt-br">
+	<head>
+	<!-- Meta tags Obrigatórias -->
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-			// initiate a network element
-			var myNetwork = newNetwork(netlen);
+	<!-- Bootstrap CSS -->
+	<link rel="stylesheet" href="css/bootstrap.min.css">
 
-			// train it
-			learning_history = learnBPP( net = myNetwork,
-				inputs = inpmatx,
-				outputs = outmatx,
-				loops = loops,
-				learningRate = rate);
-			return myNetwork;
-		}
-
-		function tryit(n){
-			console.log('tryit('+n+')');
-			var tryit_act =  "try_val = ["+document.getElementById('tryit').value+"];";
-			appendBody('script', tryit_act);
-
-			var res = n.activate(try_val);
-			console.log(try_val);
-			console.log(res);
-			document.getElementById('res').value = res;
-		}
-
-		function normalizedata(elem, target) {
-			console.log('normalizedata('+elem+','+target+')');
-			elem = document.getElementById(elem).value;
-			var res = elem.replace(/\n/g, "],[");
-			var dtx = "datamatrix = [["+res+"]];";
-			appendBody('script', dtx);
-			var maxincolumn = [];
-			for (var i = 0; i < datamatrix[0].length; i++){
-				maxincolumn.push(datamatrix[0][i]);
-			}
-			var minincolumn = [];
-			for (var i = 0; i < datamatrix[0].length; i++){
-				minincolumn.push(datamatrix[0][i]);
-			}
-
-			for (var i = 0; i < datamatrix.length; i++) {
-				for (var j = 0; j < datamatrix[0].length; j++) {
-					if(datamatrix[i][j] > maxincolumn[j]) {
-						// Max value from each column
-						maxincolumn[j] = datamatrix[i][j];
-					}
-					if(datamatrix[i][j] < minincolumn[j]) {
-						// Min value from each column
-						minincolumn[j] = datamatrix[i][j];
-					}
-				}
-			}
-			// Normalize the data
-			for (var i = 0; i < datamatrix.length; i++) {
-				for (var j = 0; j < datamatrix[i].length; j++) {
-					xi = datamatrix[i][j];
-					datamatrix[i][j] = (xi - minincolumn[j])/(maxincolumn[j]-minincolumn[j]);
-				}
-			}
-			// Write into target textarea
-			document.getElementById(target).value = "";
-			for (var i = 0; i < datamatrix.length; i++) {
-				if (i != 0) {
-					document.getElementById(target).value += "\n";
-				} 
-				for (var j = 0; j < datamatrix[i].length; j++) {
-					document.getElementById(target).value += datamatrix[i][j];
-					if (j < datamatrix[i].length-1){
-						document.getElementById(target).value += ",";
-					}
-					//xi = datamatrix[i][j];
-					//datamatrix[i][j] = (xi - minincolumn[j])/(maxincolumn[j]-minincolumn[j]);
-				}
-			}
-		}
-
-		function appendBody(elem, content) {
-			console.log('appendBody('+elem+','+content+')');
-		    var node = document.createElement(elem);
-		    var textnode = document.createTextNode(content);
-		    node.appendChild(textnode);
-		    document.body.appendChild(node);
-		}
-	</script>
-</head>
-<body>
-<h1>Synaptic</h1>
-<h2>MLP - Backpropagate Room</h2>
-Network Lengths
-<br />
-<input type="text" name="" value="2,3,1" id="netlen">
-<br />
-
-<h3> Normalize your numerical data</h3>
-Input matrix
-<br />
-<textarea rows="4" cols="20" id="inpnotnorm">
+	<title>Olá, mundo!</title>
+	</head>
+	<body>
+		<div class="container offset-md-2 col-md-8">
+			<div class="row">
+				<div class=" col-md-12">
+					<h1>MLP - Backpropagate Room <span class="badge badge-secondary">New</span></h1>
+				</div>
+			</div>
+			<hr>
+			<div class="row">
+				<div class=" col-md-12">
+					<h3>Put your data</h3>
+				</div>
+				<div class=" col-md-6">
+					<div class="form-group">
+						<label for="inpnotnorm">Input lines</label>
+						<textarea class="form-control" id="inpnotnorm" rows="5">
 0,0
 0,10
 10,0
-10,10</textarea>
-<button onclick="normalizedata('inpnotnorm','inpmatx');">Normalize</button>
-<br />
-
-Desired Outputs Matrix
-<br />
-<textarea rows="4" cols="20" id="outnotnorm">
+10,10
+						</textarea>
+					</div>
+					<div class="col-md-12 btn btn-info" onclick="normalizedata('inpnotnorm','inpmatx');">
+						Normalize
+					</div>
+				</div>
+				<div class=" col-md-6">
+					<div class="form-group">
+						<label for="outnotnorm">Output lines</label>
+						<textarea class="form-control" id="outnotnorm" rows="5">
 0
 10
 10
-0</textarea>
-<button onclick="normalizedata('outnotnorm','outmatx');">Normalize</button>
-<br />
-
-<h3> Training dataset</h3>
-Input matrix
-<br />
-<textarea rows="4" cols="20" id="inpmatx">
+0
+						</textarea>
+					</div>
+					<div class="col-md-12 btn btn-info" onclick="normalizedata('outnotnorm','outmatx');">
+						Normalize
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class=" col-md-12">
+					<h3>Check it</h3>
+				</div>
+				<div class=" col-md-6">
+					<div class="form-group">
+						<label for="inpmatx">Input lines</label>
+						<textarea class="form-control" id="inpmatx" rows="5">
 0,0
 0,1
 1,0
-1,1</textarea>
-
-<br />
-
-
-Desired Outputs Matrix
-
-<br />
-<textarea rows="4" cols="20" id="outmatx">
+1,1
+						</textarea>
+					</div>
+				</div>
+				<div class=" col-md-6">
+					<div class="form-group">
+						<label for="outmatx">Output lines</label>
+						<textarea class="form-control" id="outmatx" rows="5">
 0
 1
 1
-0</textarea>
+0
+						</textarea>
+					</div>
+				</div>
+			</div>
+			<hr>
+			<div class="row">
+				<div class=" col-md-12">
+					<h3>Network & Training Parameters</h3>
+				</div>
+				<div class="col-md-12 btn btn-danger" onclick="reset();">
+					Reset Network
+				</div>
+				<div class=" col-md-4">
+					<div class="form-group">
+						<span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="(inputs > hidden..., > outputs)">
+							<label for="netlen">Network Lengths</label>
+							<input type="text" name="netlen" class="form-control" id="netlen" placeholder="Net len" value="2,3,1">
+						</span>
+					</div>
+				</div>
+				<div class=" col-md-4">
+					<div class="form-group">
+						<label for="rate">Learning Rate</label>
+						<input type="text" name="rate" class="form-control" id="rate" placeholder="learning rate..." value="0.03">
+					</div>
+				</div>
+				<div class=" col-md-4">
+					<div class="form-group">
+						<label for="loops">Loops/Epochs</label>
+						<input type="text" name="loops" class="form-control" id="loops" placeholder="learning epochs..." value="20000">
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12 btn btn-success" onclick="net = learn();">
+					Train!
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-1 ">Error:</div>
+				<div class="col-md-3 error">0.0</div>
+				<div class="col-md-1 ">Iterations:</div>
+				<div class="col-md-3 iterations">0.0</div>
+				<div class="col-md-1 ">Rate:</div>
+				<div class="col-md-3 rate">0.0</div>
+			</div>
+			<hr>
+			<div class="row">
+				<div class=" col-md-12">
+					<h3>Use your Network</h3>
+				</div>
+				<div class=" col-md-12">
+					<div class="form-group">
+						<label for="tryit">Activation inputs</label>
+						<input type="text" name="tryit" class="form-control" id="tryit" placeholder="tryit" value="0,1">
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12 btn btn-warning" onclick="tryit(net);">Activate</div>
+			</div>
+			<div class="row">
+				<div class=" col-md-12">
+					<div class="form-group">
+						<label for="res">Result</label>
+						<input type="text" name="res" class="form-control" id="res" placeholder="Output..." value="">
+					</div>
+				</div>
+			</div>
+			<hr>
+			<div class="row">
+				<div class="offset-md-4 col-md-8">
+					By: <a href="https://github.com/EdVieira"> Eduardo Henrique Vieira dos Santos</a>
+				</div>
+			</div>
+		</div>
+	<!-- JavaScript (Opcional) -->
+	<!-- jQuery primeiro, depois Popper.js, depois Bootstrap JS -->
+	<script src="js/jquery-3.3.1.slim.min.js"></script>
+	<script src="js/popper.min.js"></script>
+	<script src="js/bootstrap.min.js"></script>
 
-<br />
-
-
-<p>Increasing layers and neurons -> increase loop and learning rate;</p>
-<br />
-Loops
-<input type="text" name="" value="20000" id="loops">
-Learning Rate
-<input type="text" name="" value="0.03" id="rate">
-
-<button onclick="net = learn();">Learn!</button>
-<br />
-
-<h4>Test your Network</h4>
-<input type="text" name="" value="0,1" id="tryit">
-<button onclick="tryit(net);">Try it!</button>
-Result
-<input type="text" name="" value="" id="res">
-
-</body>
+	<script type="text/javascript" src="js/synaptic.min.js"></script>
+	<script type="text/javascript" src="js/mysyn.js"></script>
+	<script type="text/javascript" src="js/utils.js"></script>
+	</body>
 </html>

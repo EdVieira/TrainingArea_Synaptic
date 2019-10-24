@@ -76,7 +76,11 @@ function learnBPP(net, inputs, outputs, loops = 20000, learningRate = 0.3){
 			every: 500, // repeat this task every 500 iterations
 			do: function(data) {
 				// custom log
+				var logstr = "Error: "+data.error+"| Iterations:"+data.iterations+"| Rate:"+data.rate;
 				console.log("error", data.error, "iterations", data.iterations, "rate", data.rate);
+				document.querySelector('.error').innerHTML = data.error;
+				document.querySelector('.iterations').innerHTML = data.iterations;
+				document.querySelector('.rate').innerHTML = data.rate;
 				if (data.error<0.00001)
 					return true; // abort/stop training
 				}
