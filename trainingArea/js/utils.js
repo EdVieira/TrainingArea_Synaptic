@@ -6,8 +6,10 @@ var myNetwork = null;
 
 function reset() {
 	document.querySelector('.terror').innerHTML = '0.0';
+	document.querySelector('.test_error').innerHTML = '0.0';
+	document.querySelector('.tcost').innerHTML = '0.0';
+	document.querySelector('.vcost').innerHTML = '0.0';
 	document.querySelector('.iterations').innerHTML = '0.0';
-	document.querySelector('.verror').innerHTML = '0.0';
 	myNetwork = null;
 }
 
