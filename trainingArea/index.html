@@ -20,49 +20,45 @@
 			<hr>
 			<div class="row">
 				<div class=" col-md-12">
-					<h3>Put your data</h3>
+					<h3>Training Data</h3>
 				</div>
 				<div class=" col-md-6">
 					<div class="form-group">
 						<label for="inpnotnorm">Input lines</label>
-						<textarea class="form-control" id="inpnotnorm" rows="5">
-0,0
-0,10
-10,0
-10,10
-						</textarea>
+						<textarea class="form-control" id="inpnotnorm" rows="5">0	0
+0	1
+1	0
+1	1</textarea>
 					</div>
-					<div class="col-md-12 btn btn-info" onclick="normalizedata('inpnotnorm','inpmatx');">
-						Normalize
+					<div class="col-md-12 btn btn-primary" onclick="trainInputMinMax=scaleData('inpnotnorm','inpnotnorm');document.querySelector('#netlen').value = trainInputMinMax.maxincolumn.length+','+document.querySelector('#netlen').value">
+						Scale Data
 					</div>
 				</div>
 				<div class=" col-md-6">
 					<div class="form-group">
 						<label for="outnotnorm">Output lines</label>
-						<textarea class="form-control" id="outnotnorm" rows="5">
-0
-10
-10
-0
-						</textarea>
+						<textarea class="form-control" id="outnotnorm" rows="5">0
+1
+1
+0</textarea>
 					</div>
-					<div class="col-md-12 btn btn-info" onclick="normalizedata('outnotnorm','outmatx');">
-						Normalize
+					<div class="col-md-12 btn btn-primary" onclick="trainOutputMinMax=scaleData('outnotnorm','outnotnorm');document.querySelector('#netlen').value = document.querySelector('#netlen').value+','+trainOutputMinMax.maxincolumn.length">
+						Scale Data
 					</div>
 				</div>
 			</div>
-			<div class="row">
+			<!--div class="row">
 				<div class=" col-md-12">
-					<h3>Check it</h3>
+					<h3>Test Data</h3>
 				</div>
 				<div class=" col-md-6">
 					<div class="form-group">
 						<label for="inpmatx">Input lines</label>
 						<textarea class="form-control" id="inpmatx" rows="5">
-0,0
-0,1
-1,0
-1,1
+0	0
+0	1
+1	0
+1	1
 						</textarea>
 					</div>
 				</div>
@@ -77,14 +73,20 @@
 						</textarea>
 					</div>
 				</div>
-			</div>
+			</div-->
 			<hr>
 			<div class="row">
 				<div class=" col-md-12">
 					<h3>Network & Training Parameters</h3>
 				</div>
-				<div class="col-md-12 btn btn-danger" onclick="reset();">
+				<div class="col-md-5 btn btn-danger" onclick="reset();">
 					Reset Network
+				</div>
+				<div class="col-md-6 offset-md-1 btn btn-dark">
+					Load Network: 
+					<span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="Load Network">
+						<input type="file" id="files" name="files" multiple class="filestyle" data-classButton="btn btn-primary" data-input="false" data-classIcon="icon-plus" data-buttontext="Your label here.">
+					</span>
 				</div>
 				<div class=" col-md-4">
 					<div class="form-group">
@@ -102,23 +104,70 @@
 				</div>
 				<div class=" col-md-4">
 					<div class="form-group">
-						<label for="loops">Loops/Epochs</label>
+						<label for="loops">Training Loops</label>
 						<input type="text" name="loops" class="form-control" id="loops" placeholder="learning epochs..." value="20000">
 					</div>
 				</div>
-			</div>
-			<div class="row">
-				<div class="col-md-12 btn btn-success" onclick="net = learn();">
-					Train!
+
+				<div class=" col-md-4">
+					<div class="form-group">
+						<span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="(inputs > hidden..., > outputs)">
+							<label for="train_data_proportion">Train/Test data proportion</label>
+							<input type="text" name="train_data_proportion" class="form-control" id="train_data_proportion" placeholder="Net len" value="0.8">
+						</span>
+					</div>
+				</div>
+				<div class=" col-md-4">
+					<div class="form-group">
+						<span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="(inputs > hidden..., > outputs)">
+							<label for="test_count">Cost/Loss count</label>
+							<input type="text" name="test_count" class="form-control" id="test_count" placeholder="Net len" value="10">
+						</span>
+					</div>
+				</div>
+				<div class=" col-md-4">
+					<div class="form-group">
+						<span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="(inputs > hidden..., > outputs)">
+							<label for="log_interval">Log Every</label>
+							<input type="text" name="log_interval" class="form-control" id="log_interval" placeholder="Net len" value="500">
+						</span>
+					</div>
+				</div>
+				<div class="input-group mb-4">
+					<div class="input-group-prepend">
+						<label class="input-group-text" for="const_function">Cost/Loss</label>
+					</div>
+					<select class="custom-select" id="const_function" required='true'>
+						<option selected value="CROSS_ENTROPY">CROSS_ENTROPY</option>
+						<option value="MSE">MSE (Mean Squared Error)</option>
+						<option value="BINARY">BINARY</option>
+					</select>
 				</div>
 			</div>
+
 			<div class="row">
-				<div class="col-md-1 ">Error:</div>
-				<div class="col-md-3 error">0.0</div>
-				<div class="col-md-1 ">Iterations:</div>
-				<div class="col-md-3 iterations">0.0</div>
-				<div class="col-md-1 ">Rate:</div>
-				<div class="col-md-3 rate">0.0</div>
+				<div class="col-md-12 btn btn-success" onclick="myNetwork = learn();">
+					Train Network
+				</div>
+			</div>
+			<hr>
+			<div class="row">
+				<div class=" col-md-12">
+					<h3>Training Information</h3>
+				</div>
+					<div class="col-md-3">Training Error:</div>
+					<div class="col-md-3 terror">0.0</div>
+					<div class="col-md-3">Test Error:</div>
+					<div class="col-md-3 test_error">0.0</div>
+					<div class="col-md-3">Training Loss:</div>
+					<div class="col-md-3 tcost">0.0</div>
+					<div class="col-md-3">Test Loss:</div>
+					<div class="col-md-3 vcost">0.0</div>
+					<div class="col-md-3">Iterations:</div>
+					<div class="col-md-3 iterations">0.0</div>
+					<div class="col-md-3 offset-md-1 btn btn-dark" onclick="saveNetwork();" style="display: none" id="saveButton">
+						<a class="alert-link" href="#" id="saveNetwork">Save Network</a>
+					</div>
 			</div>
 			<hr>
 			<div class="row">
@@ -127,19 +176,23 @@
 				</div>
 				<div class=" col-md-12">
 					<div class="form-group">
-						<label for="tryit">Activation inputs</label>
-						<input type="text" name="tryit" class="form-control" id="tryit" placeholder="tryit" value="0,1">
+						<label for="tryit">Input lines</label>
+						<textarea class="form-control" id="tryit" rows="5">0	0
+0	1
+1	0
+1	1</textarea>
 					</div>
 				</div>
 			</div>
 			<div class="row">
-				<div class="col-md-12 btn btn-warning" onclick="tryit(net);">Activate</div>
+				<div class="col-md-12 btn btn-warning" onclick="tryit(myNetwork,trainInputMinMax,trainOutputMinMax);">Predict</div>
 			</div>
 			<div class="row">
 				<div class=" col-md-12">
+
 					<div class="form-group">
-						<label for="res">Result</label>
-						<input type="text" name="res" class="form-control" id="res" placeholder="Output..." value="">
+						<label for="res">Result CSV(TSV)</label>
+						<textarea class="form-control" id="res" rows="5" placeholder="Output..."></textarea>
 					</div>
 				</div>
 			</div>
