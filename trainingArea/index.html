@@ -8,13 +8,14 @@
 	<!-- Bootstrap CSS -->
 	<link rel="stylesheet" href="css/bootstrap.min.css">
 
-	<title>MLP - Backpropagate Room</title>
+	<title>Mulyper - Multi-layer Perceptron Training Room</title>
 	</head>
 	<body>
 		<div class="container offset-md-2 col-md-8">
 			<div class="row">
 				<div class=" col-md-12">
-					<h1>MLP - Backpropagate Room <span class="badge badge-secondary">New</span></h1>
+					<h1>Mulyper <span class="badge badge-secondary">New</span></h1>
+					<h2>Multi-layer Perceptron Training Room</h2>
 				</div>
 			</div>
 			<hr>
@@ -30,8 +31,11 @@
 1	0
 1	1</textarea>
 					</div>
-					<div class="col-md-12 btn btn-primary" onclick="trainInputMinMax=scaleData('inpnotnorm','inpnotnorm');document.querySelector('#netlen').value = trainInputMinMax.maxincolumn.length+','+document.querySelector('#netlen').value">
-						Scale Data
+					<div class="col-md-5 btn btn-primary" onclick="inputMinMax=scaleData('inpnotnorm','inpnotnorm');document.querySelector('#netlen').value = inputMinMax.maxincolumn.length+','+document.querySelector('#netlen').value">
+						Min-Max Scaler
+					</div>
+					<div class="col-md-5 offset-md-1 btn btn-primary" onclick="alert('Soon!');inputOneHotEncoding=oneHotEncoding('inpnotnorm','inpnotnorm');document.querySelector('#netlen').value = inputOneHotEncoding.inputLen+','+document.querySelector('#netlen').value">
+						One-Hot Encoder
 					</div>
 				</div>
 				<div class=" col-md-6">
@@ -42,38 +46,15 @@
 1
 0</textarea>
 					</div>
-					<div class="col-md-12 btn btn-primary" onclick="trainOutputMinMax=scaleData('outnotnorm','outnotnorm');document.querySelector('#netlen').value = document.querySelector('#netlen').value+','+trainOutputMinMax.maxincolumn.length">
-						Scale Data
+					<div class="col-md-5 btn btn-primary" onclick="outputMinMax=scaleData('outnotnorm','outnotnorm');document.querySelector('#netlen').value = document.querySelector('#netlen').value+','+outputMinMax.maxincolumn.length">
+						Min-Max Scaler
+					</div>
+
+					<div class="col-md-5 offset-md-1 btn btn-primary" onclick="alert('Soon!');outputOneHotEncoding=oneHotEncoding('inpnotnorm','inpnotnorm');document.querySelector('#netlen').value = document.querySelector('#netlen').value+','+outputOneHotEncoding.inputLen">
+						One-Hot Encoder
 					</div>
 				</div>
 			</div>
-			<!--div class="row">
-				<div class=" col-md-12">
-					<h3>Test Data</h3>
-				</div>
-				<div class=" col-md-6">
-					<div class="form-group">
-						<label for="inpmatx">Input lines</label>
-						<textarea class="form-control" id="inpmatx" rows="5">
-0	0
-0	1
-1	0
-1	1
-						</textarea>
-					</div>
-				</div>
-				<div class=" col-md-6">
-					<div class="form-group">
-						<label for="outmatx">Output lines</label>
-						<textarea class="form-control" id="outmatx" rows="5">
-0
-1
-1
-0
-						</textarea>
-					</div>
-				</div>
-			</div-->
 			<hr>
 			<div class="row">
 				<div class=" col-md-12">
@@ -185,7 +166,7 @@
 				</div>
 			</div>
 			<div class="row">
-				<div class="col-md-12 btn btn-warning" onclick="tryit(myNetwork,trainInputMinMax,trainOutputMinMax);">Predict</div>
+				<div class="col-md-12 btn btn-warning" onclick="tryit(myNetwork,inputMinMax,outputMinMax);">Predict</div>
 			</div>
 			<div class="row">
 				<div class=" col-md-12">

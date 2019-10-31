@@ -1,7 +1,7 @@
 
 var learning_history;
-var trainInputMinMax;
-var trainOutputMinMax;
+var inputMinMax;
+var outputMinMax;
 var myNetwork = null;
 
 function reset() {
@@ -29,8 +29,15 @@ function setDownloadString(str, elem)	{
 
 function saveNetwork() {
 	if (myNetwork) {
-		var netStr = JSON.stringify(myNetwork);
-		setDownloadString(netStr, '#saveNetwork');
+		var model = {'network':myNetwork};
+		if (inputMinMax)	{
+			model.inputMinMax = inputMinMax
+		}
+		if (outputMinMax)	{
+			model.outputMinMax = outputMinMax
+		}
+		var modelStr = JSON.stringify(model);
+		setDownloadString(modelStr, '#saveNetwork');
 	}
 }
 
@@ -80,12 +87,12 @@ function tryit(n){
 	}
 	document.getElementById('res').innerHTML = '';
 	for (var i = 0; i < try_val.length; i++) {
-		if(trainInputMinMax){
-			try_val[i] = scaleVector(try_val[i], trainInputMinMax);	
+		if(inputMinMax){
+			try_val[i] = scaleVector(try_val[i], inputMinMax);	
 		}
 		var res = n.activate(try_val[i]);
-		if(trainOutputMinMax){
-			res = unscale(res,trainOutputMinMax);
+		if(outputMinMax){
+			res = unscale(res,outputMinMax);
 		}
 		document.getElementById('res').innerHTML += res.toString().replace(/,/g, '\t')+'\n';
 	}
@@ -198,10 +205,18 @@ function loadNetworkFromJsonFile(evt) {
 			return function(e) {
 				// Render thumbnail.
 				var filestream = e.target.result.toString();
-				var netAux = filestream.split(',')[1];
-				netAux = atob(netAux); // from Base64 to text
-				netAux = JSON.parse(netAux);
-				myNetwork = Network.fromJSON(netAux);
+				var model = filestream.split(',')[1];
+				model = atob(model); // from Base64 to text
+				model = JSON.parse(model);
+				if (model.network)	{
+					myNetwork = Network.fromJSON(model.network);
+				}
+				if (model.inputMinMax)	{
+					inputMinMax = model.inputMinMax;
+				}
+				if (model.outputMinMax)	{
+					outputMinMax = model.outputMinMax;
+				}
 			};
 		})(f);
 		// Read in the image file as a data URL.
