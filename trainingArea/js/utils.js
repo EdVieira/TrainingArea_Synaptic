@@ -2,6 +2,8 @@
 var learning_history;
 var inputMinMax;
 var outputMinMax;
+var inputOneHotEncoding;
+var outputOneHotEncoding;
 var myNetwork = null;
 
 function reset() {
@@ -30,8 +32,14 @@ function setDownloadString(str, elem)	{
 function saveNetwork() {
 	if (myNetwork) {
 		var model = {'network':myNetwork};
+		if (inputOneHotEncoding)	{
+			model.inputOneHotEncoding = inputOneHotEncoding
+		}
 		if (inputMinMax)	{
 			model.inputMinMax = inputMinMax
+		}
+		if (outputOneHotEncoding)	{
+			model.outputOneHotEncoding = outputOneHotEncoding
 		}
 		if (outputMinMax)	{
 			model.outputMinMax = outputMinMax
@@ -72,25 +80,28 @@ console.log('learn()');
 	return myNetwork;
 }
 
-function tryit(n){
-	console.log('tryit('+n+')');
-	//var tryit_act =  "try_val = ["+document.getElementById('tryit').value+"];";
-	//appendBody('script', tryit_act);
-	var aux = document.getElementById('tryit').value.trim().split('\n');
-	var try_val = [];
+function predict(n){
+	console.log('predict('+n+')');
+	//var predict_act =  "predictValues = ["+document.getElementById('predict').value+"];";
+	//appendBody('script', predict_act);
+	//var aux = document.getElementById('predict').value.trim().split('\n');
+	var rowSep = '\n';
+	var colSep = '\t';
+	var predictValues = stringCSVtoMatrix('predict', rowSep, colSep);
+	/*var predictValues = [];
 	for (var i = 0; i < aux.length; i++) {
 		var columns = aux[i].split('\t')
 		for (var j = 0; j < columns.length; j++) {
 			columns[j] = parseFloat(columns[j]);
 		}
-		try_val[try_val.length] = columns;
-	}
+		predictValues[predictValues.length] = columns;
+	}*/
 	document.getElementById('res').innerHTML = '';
-	for (var i = 0; i < try_val.length; i++) {
+	for (var i = 0; i < predictValues.length; i++) {
 		if(inputMinMax){
-			try_val[i] = scaleVector(try_val[i], inputMinMax);	
+			predictValues[i] = scaleVector(predictValues[i], inputMinMax);	
 		}
-		var res = n.activate(try_val[i]);
+		var res = n.activate(predictValues[i]);
 		if(outputMinMax){
 			res = unscale(res,outputMinMax);
 		}
@@ -98,87 +109,21 @@ function tryit(n){
 	}
 }
 
-function fitMinMaxScaler(dtMatrix)	{
-	var maxincolumn = [];
-	for (var i = 0; i < dtMatrix[0].length; i++){
-		maxincolumn.push(dtMatrix[0][i]);
-	}
-	var minincolumn = [];
-	for (var i = 0; i < dtMatrix[0].length; i++){
-		minincolumn.push(dtMatrix[0][i]);
-	}
-
-	for (var i = 0; i < dtMatrix.length; i++) {
-		for (var j = 0; j < dtMatrix[0].length; j++) {
-			if(dtMatrix[i][j] > maxincolumn[j]) {
-				// Max value from each column
-				maxincolumn[j] = dtMatrix[i][j];
-			}
-			if(dtMatrix[i][j] < minincolumn[j]) {
-				// Min value from each column
-				minincolumn[j] = dtMatrix[i][j];
+function stringCSVtoMatrix(elem, row_separator=/\n/g, col_separator=/\t/g)	{
+	var aux = document.getElementById(elem).value.trim().split(row_separator);
+	var textAreaMatrix = [];
+	for (var i = 0; i < aux.length; i++) {
+		var columns = aux[i].split(col_separator)
+		for (var j = 0; j < columns.length; j++) {
+			if (isNaN(columns[j]))	{
+				columns[j] = columns[j];
+			} else {
+				columns[j] = parseFloat(columns[j]);
 			}
 		}
+		textAreaMatrix[textAreaMatrix.length] = columns;
 	}
-	return {maxincolumn, minincolumn};
-}
-
-function scale(dtMatrix, minMaxColumns)	{
-	for (var i = 0; i < dtMatrix.length; i++) {
-		dtMatrix[i] = scaleVector(dtMatrix[i], minMaxColumns);
-	}
-	return dtMatrix;
-}
-function scaleVector(vector, minMaxColumns)	{
-	for (var j = 0; j < vector.length; j++) {
-		xi = vector[j];
-		var amplitude = (minMaxColumns.maxincolumn[j]-minMaxColumns.minincolumn[j]);
-		var observation = (xi - minMaxColumns.minincolumn[j]);
-		if (observation < 0) {
-			observation = 0;
-		}
-		vector[j] = observation/amplitude;
-		if (vector[j] > 1) {
-			vector[j] = 1;
-		}
-	}
-	return vector;
-}
-function unscale(vector, minMaxColumns)	{
-	for (var j = 0; j < vector.length; j++) {
-		var amplitude = (minMaxColumns.maxincolumn[j]-minMaxColumns.minincolumn[j]);
-		vector[j] = vector[j] * amplitude;
-		vector[j] = vector[j] + minMaxColumns.minincolumn[j];
-	}
-	return vector;
-}
-
-function scaleData(elem, target) {
-	console.log('normalizedata('+elem+','+target+')');
-
-	var res = getMatrix(elem);
-	var dtx = "datamatrix = "+res+";";
-
-	appendBody('script', dtx);
-	var minMaxScaler = fitMinMaxScaler(datamatrix);
-	// Normalize the data
-	datamatrix = scale(datamatrix, minMaxScaler)
-	// Write into target textarea
-	document.getElementById(target).value = "";
-	for (var i = 0; i < datamatrix.length; i++) {
-		if (i != 0) {
-			document.getElementById(target).value += "\n";
-		} 
-		for (var j = 0; j < datamatrix[i].length; j++) {
-			document.getElementById(target).value += datamatrix[i][j];
-			if (j < datamatrix[i].length-1){
-				document.getElementById(target).value += "\t";
-			}
-			//xi = datamatrix[i][j];
-			//datamatrix[i][j] = (xi - minincolumn[j])/(maxincolumn[j]-minincolumn[j]);
-		}
-	}
-	return minMaxScaler;
+	return textAreaMatrix;
 }
 
 function appendBody(elem, content) {

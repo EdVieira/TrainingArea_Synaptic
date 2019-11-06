@@ -23,6 +23,18 @@
 				<div class=" col-md-12">
 					<h3>Training Data</h3>
 				</div>
+				<!--div class=" col-md-12">
+					<div class="input-group my-3">
+						<label for="separator">Column Separator:</label>
+						<input type="text" name="separator" class="form-control col-md-2 offset-md-1" id="separator" placeholder="Like , or ;" value=",">
+						<label class="col-md-3 offset-md-1" for="tab_separator">TSV (\t separator)</label>
+						<div class="input-group-prepend">
+							<div class="input-group-text">
+								<input type="checkbox" name="tab_separator" id="tab_separator" checked="true">
+							</div>
+						</div>
+					</div>
+				</div-->
 				<div class=" col-md-6">
 					<div class="form-group">
 						<label for="inpnotnorm">Input lines</label>
@@ -34,7 +46,7 @@
 					<div class="col-md-5 btn btn-primary" onclick="inputMinMax=scaleData('inpnotnorm','inpnotnorm');document.querySelector('#netlen').value = inputMinMax.maxincolumn.length+','+document.querySelector('#netlen').value">
 						Min-Max Scaler
 					</div>
-					<div class="col-md-5 offset-md-1 btn btn-primary" onclick="alert('Soon!');inputOneHotEncoding=oneHotEncoding('inpnotnorm','inpnotnorm');document.querySelector('#netlen').value = inputOneHotEncoding.inputLen+','+document.querySelector('#netlen').value">
+					<div class="col-md-5 offset-md-1 btn btn-primary" onclick="inputOneHotEncoding=oneHotData('inpnotnorm','inpnotnorm');document.querySelector('#netlen').value = inputOneHotEncoding.length+','+document.querySelector('#netlen').value">
 						One-Hot Encoder
 					</div>
 				</div>
@@ -50,7 +62,7 @@
 						Min-Max Scaler
 					</div>
 
-					<div class="col-md-5 offset-md-1 btn btn-primary" onclick="alert('Soon!');outputOneHotEncoding=oneHotEncoding('inpnotnorm','inpnotnorm');document.querySelector('#netlen').value = document.querySelector('#netlen').value+','+outputOneHotEncoding.inputLen">
+					<div class="col-md-5 offset-md-1 btn btn-primary" onclick="outputOneHotEncoding=oneHotData('outnotnorm','outnotnorm');document.querySelector('#netlen').value = document.querySelector('#netlen').value+','+outputOneHotEncoding.length">
 						One-Hot Encoder
 					</div>
 				</div>
@@ -157,8 +169,8 @@
 				</div>
 				<div class=" col-md-12">
 					<div class="form-group">
-						<label for="tryit">Input lines</label>
-						<textarea class="form-control" id="tryit" rows="5">0	0
+						<label for="predict">Input lines</label>
+						<textarea class="form-control" id="predict" rows="5">0	0
 0	1
 1	0
 1	1</textarea>
@@ -166,7 +178,7 @@
 				</div>
 			</div>
 			<div class="row">
-				<div class="col-md-12 btn btn-warning" onclick="tryit(myNetwork,inputMinMax,outputMinMax);">Predict</div>
+				<div class="col-md-12 btn btn-warning" onclick="predict(myNetwork,inputMinMax,outputMinMax);">Predict</div>
 			</div>
 			<div class="row">
 				<div class=" col-md-12">
@@ -193,5 +205,7 @@
 	<script type="text/javascript" src="js/synaptic.min.js"></script>
 	<script type="text/javascript" src="js/mysyn.js"></script>
 	<script type="text/javascript" src="js/utils.js"></script>
+	<script type="text/javascript" src="js/oneHotEncoder.js"></script>
+	<script type="text/javascript" src="js/minMaxScaler.js"></script>
 	</body>
 </html>
