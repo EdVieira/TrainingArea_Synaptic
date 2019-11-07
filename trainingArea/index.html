@@ -43,10 +43,10 @@
 1	0
 1	1</textarea>
 					</div>
-					<div class="col-md-5 btn btn-primary" onclick="inputMinMax=scaleData('inpnotnorm','inpnotnorm');document.querySelector('#netlen').value = inputMinMax.maxincolumn.length+','+document.querySelector('#netlen').value">
+					<div class="col-md-5 btn btn-primary" id="minmaxinp">
 						Min-Max Scaler
 					</div>
-					<div class="col-md-5 offset-md-1 btn btn-primary" onclick="inputOneHotEncoding=oneHotData('inpnotnorm','inpnotnorm');document.querySelector('#netlen').value = inputOneHotEncoding.length+','+document.querySelector('#netlen').value">
+					<div class="col-md-5 offset-md-1 btn btn-primary" id="onehotinp">
 						One-Hot Encoder
 					</div>
 				</div>
@@ -58,11 +58,11 @@
 1
 0</textarea>
 					</div>
-					<div class="col-md-5 btn btn-primary" onclick="outputMinMax=scaleData('outnotnorm','outnotnorm');document.querySelector('#netlen').value = document.querySelector('#netlen').value+','+outputMinMax.maxincolumn.length">
+					<div class="col-md-5 btn btn-primary" id="minmaxout">
 						Min-Max Scaler
 					</div>
 
-					<div class="col-md-5 offset-md-1 btn btn-primary" onclick="outputOneHotEncoding=oneHotData('outnotnorm','outnotnorm');document.querySelector('#netlen').value = document.querySelector('#netlen').value+','+outputOneHotEncoding.length">
+					<div class="col-md-5 offset-md-1 btn btn-primary" id="onehotout">
 						One-Hot Encoder
 					</div>
 				</div>

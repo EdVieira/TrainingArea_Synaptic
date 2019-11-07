@@ -13,7 +13,9 @@ function oneHotData(elem, target) {
 	}
 	//appendBody('script', dtx);
 	var oneHotEncoder = fitOneHotEncoder(datamatrix, target_cols);
+	oneHotEncoder.length = datamatrix[0].length + oneHotEncoder.colCount() - 1;
 	// Encode the data
+	/*
 	datamatrix = encodeOneHot(datamatrix, oneHotEncoder)
 	// Write into target textarea
 	document.getElementById(target).value = "";
@@ -29,7 +31,8 @@ function oneHotData(elem, target) {
 			//xi = datamatrix[i][j];
 			//datamatrix[i][j] = (xi - minincolumn[j])/(maxincolumn[j]-minincolumn[j]);
 		}
-	}
+	}*/
+	alert('One Hot Encoding fitted!')
 	return oneHotEncoder;
 }
 
@@ -82,6 +85,5 @@ function encodeOneHot(dtMatrix, encoder)	{
 			dtMatrix[i].splice(j,1); // remove old column
 		}
 	}
-	encoder.length = dtMatrix[0].length;
 	return dtMatrix;
 }

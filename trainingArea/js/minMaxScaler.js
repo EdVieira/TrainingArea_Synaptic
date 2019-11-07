@@ -1,3 +1,33 @@
+function scaleData(elem, target) {
+	console.log('scaledata('+elem+','+target+')');
+
+	//var res = getMatrix(elem);
+	//var dtx = "datamatrix = "+res+";";
+	var datamatrix = stringCSVtoMatrix(elem);
+
+	//appendBody('script', dtx);
+	var minMaxScaler = fitMinMaxScaler(datamatrix);
+	// Scale the data
+	/*
+	datamatrix = scale(datamatrix, minMaxScaler)
+	// Write into target textarea
+	document.getElementById(target).value = "";
+	for (var i = 0; i < datamatrix.length; i++) {
+		if (i != 0) {
+			document.getElementById(target).value += "\n";
+		} 
+		for (var j = 0; j < datamatrix[i].length; j++) {
+			document.getElementById(target).value += datamatrix[i][j];
+			if (j < datamatrix[i].length-1){
+				document.getElementById(target).value += "\t";
+			}
+			//xi = datamatrix[i][j];
+			//datamatrix[i][j] = (xi - minincolumn[j])/(maxincolumn[j]-minincolumn[j]);
+		}
+	}*/
+	alert('minMaxScaler fitted!');
+	return minMaxScaler;
+}
 
 function fitMinMaxScaler(dtMatrix)	{
 	var maxincolumn = [];
@@ -53,32 +83,4 @@ function unscale(vector, minMaxColumns)	{
 		vector[j] = vector[j] + minMaxColumns.minincolumn[j];
 	}
 	return vector;
-}
-
-function scaleData(elem, target) {
-	console.log('scaledata('+elem+','+target+')');
-
-	var res = getMatrix(elem);
-	var dtx = "datamatrix = "+res+";";
-
-	appendBody('script', dtx);
-	var minMaxScaler = fitMinMaxScaler(datamatrix);
-	// Scale the data
-	datamatrix = scale(datamatrix, minMaxScaler)
-	// Write into target textarea
-	document.getElementById(target).value = "";
-	for (var i = 0; i < datamatrix.length; i++) {
-		if (i != 0) {
-			document.getElementById(target).value += "\n";
-		} 
-		for (var j = 0; j < datamatrix[i].length; j++) {
-			document.getElementById(target).value += datamatrix[i][j];
-			if (j < datamatrix[i].length-1){
-				document.getElementById(target).value += "\t";
-			}
-			//xi = datamatrix[i][j];
-			//datamatrix[i][j] = (xi - minincolumn[j])/(maxincolumn[j]-minincolumn[j]);
-		}
-	}
-	return minMaxScaler;
 }

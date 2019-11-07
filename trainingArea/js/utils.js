@@ -52,18 +52,38 @@ function saveNetwork() {
 function learn(){
 console.log('learn()');
 	// get attributes
-	netlen = "netlen = ["+document.getElementById('netlen').value+"];";
-	loops = "loops = "+document.getElementById('loops').value+";";
-	rate = "rate = "+document.getElementById('rate').value+";";
-	var res = getMatrix('inpnotnorm');
-	inpmatx = "inpmatx = "+res+";";
-	var res = getMatrix('outnotnorm');
-	outmatx = "outmatx = "+res+";";
-	appendBody('script', netlen);
-	appendBody('script', loops);
-	appendBody('script', rate);
-	appendBody('script', inpmatx);
-	appendBody('script', outmatx);
+	netlen = document.getElementById('netlen').value.split(',');
+	for (var i in netlen)	{
+		netlen[i] = parseInt(netlen[i])
+	}
+	loops = parseInt(document.getElementById('loops').value);
+	rate = parseFloat(document.getElementById('rate').value);
+	//var res = getMatrix('inpnotnorm');
+	//inpmatx = "inpmatx = "+res+";";
+	//var res = getMatrix('outnotnorm');
+	//outmatx = "outmatx = "+res+";";
+	//appendBody('script', netlen);
+	//appendBody('script', loops);
+	//appendBody('script', rate);
+	//appendBody('script', inpmatx);
+	//appendBody('script', outmatx);
+	alert('Training input data...');
+	var inpmatx = stringCSVtoMatrix('inpnotnorm');
+	if (inputOneHotEncoding)	{
+		inpmatx = encodeOneHot(inpmatx, inputOneHotEncoding)
+	}
+	if (inputMinMax)	{
+		inpmatx = scale(inpmatx, inputMinMax);
+	}
+
+	alert('Training output data...');
+	var outmatx = stringCSVtoMatrix('outnotnorm');
+	if (outputOneHotEncoding)	{
+		outmatx = encodeOneHot(outmatx, outputOneHotEncoding)
+	}
+	if (outputMinMax)	{
+		outmatx = scale(outmatx, outputMinMax);
+	}
 
 	// initiate a network element
 	if (!myNetwork)	{
@@ -110,6 +130,10 @@ function predict(n){
 }
 
 function stringCSVtoMatrix(elem, row_separator=/\n/g, col_separator=/\t/g)	{
+	var aux_col_sep = prompt('Column separator.\n(blank for tab separator)\n E.g.: ; ')
+	if (aux_col_sep.length>0)	{
+		col_separator = aux_col_sep;
+	}
 	var aux = document.getElementById(elem).value.trim().split(row_separator);
 	var textAreaMatrix = [];
 	for (var i = 0; i < aux.length; i++) {
@@ -170,3 +194,20 @@ function loadNetworkFromJsonFile(evt) {
 }
 
 document.getElementById('files').addEventListener('change', loadNetworkFromJsonFile, false);
+document.getElementById('minmaxinp').addEventListener('click', function () {
+	inputMinMax=scaleData('inpnotnorm','inpnotnorm');
+	document.querySelector('#netlen').value = inputMinMax.maxincolumn.length+','+document.querySelector('#netlen').value;
+}, false);
+document.getElementById('minmaxout').addEventListener('click', function () {
+	outputMinMax=scaleData('outnotnorm','outnotnorm');
+	document.querySelector('#netlen').value = document.querySelector('#netlen').value+','+outputMinMax.maxincolumn.length
+}, false);
+
+document.getElementById('onehotinp').addEventListener('click', function () {
+	inputOneHotEncoding=oneHotData('inpnotnorm','inpnotnorm');
+	document.querySelector('#netlen').value = inputOneHotEncoding.length+','+document.querySelector('#netlen').value
+}, false);
+document.getElementById('onehotout').addEventListener('click', function () {
+	outputOneHotEncoding=oneHotData('outnotnorm','outnotnorm');
+	document.querySelector('#netlen').value = document.querySelector('#netlen').value+','+outputOneHotEncoding.length
+}, false);
