@@ -8,7 +8,6 @@ function scaleData(elem, target) {
 	//appendBody('script', dtx);
 	var minMaxScaler = fitMinMaxScaler(datamatrix);
 	// Scale the data
-	/*
 	datamatrix = scale(datamatrix, minMaxScaler)
 	// Write into target textarea
 	document.getElementById(target).value = "";
@@ -21,10 +20,8 @@ function scaleData(elem, target) {
 			if (j < datamatrix[i].length-1){
 				document.getElementById(target).value += "\t";
 			}
-			//xi = datamatrix[i][j];
-			//datamatrix[i][j] = (xi - minincolumn[j])/(maxincolumn[j]-minincolumn[j]);
 		}
-	}*/
+	}
 	alert('minMaxScaler fitted!');
 	return minMaxScaler;
 }

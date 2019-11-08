@@ -130,9 +130,11 @@ function predict(n){
 }
 
 function stringCSVtoMatrix(elem, row_separator=/\n/g, col_separator=/\t/g)	{
-	var aux_col_sep = prompt('Column separator.\n(blank for tab separator)\n E.g.: ; ')
-	if (aux_col_sep.length>0)	{
-		col_separator = aux_col_sep;
+	if (document.getElementById('custom_separator').checked){
+		var aux_col_sep = prompt('Column separator.\n(blank for tab separator)\n E.g.: ; ')
+		if (aux_col_sep.length>0)	{
+			col_separator = aux_col_sep;
+		}	
 	}
 	var aux = document.getElementById(elem).value.trim().split(row_separator);
 	var textAreaMatrix = [];

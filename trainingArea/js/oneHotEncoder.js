@@ -15,7 +15,6 @@ function oneHotData(elem, target) {
 	var oneHotEncoder = fitOneHotEncoder(datamatrix, target_cols);
 	oneHotEncoder.length = datamatrix[0].length + oneHotEncoder.colCount() - 1;
 	// Encode the data
-	/*
 	datamatrix = encodeOneHot(datamatrix, oneHotEncoder)
 	// Write into target textarea
 	document.getElementById(target).value = "";
@@ -31,7 +30,7 @@ function oneHotData(elem, target) {
 			//xi = datamatrix[i][j];
 			//datamatrix[i][j] = (xi - minincolumn[j])/(maxincolumn[j]-minincolumn[j]);
 		}
-	}*/
+	}
 	alert('One Hot Encoding fitted!')
 	return oneHotEncoder;
 }
@@ -41,7 +40,7 @@ function fitOneHotEncoder(dtMatrix, target_cols=[1,2])	{
 	encoder.colCount = function()	{
 		var counter = 0;
 		for (i in this.columnIndex){
-			for (j = 0; j < this.columnIndex[i].length; j++){
+			for (j = 0; j < this.columnIndex[i].values.length; j++){
 				counter++;
 			}
 		}
@@ -53,16 +52,19 @@ function fitOneHotEncoder(dtMatrix, target_cols=[1,2])	{
 function getDistinctByColumns(dtMatrix, target_cols=[1,2])	{
 	var distinctByColumn = {};
 	distinctByColumn.columnIndex = {}
+	distinctByColumn.removedIndexes = 0;
 	for (var i = 0; i < dtMatrix[0].length; i++){
 		if (target_cols.includes(i)) {
-			distinctByColumn.columnIndex[i] = [];
+			distinctByColumn.columnIndex[i] = {"values":[],"newColumns":{}};
+			distinctByColumn.removedIndexes++;
 		}
 	}
+	distinctByColumn.originalCol = dtMatrix[0].length;
 	for (var i = 0; i < dtMatrix.length; i++) {
 		for (var j = 0; j < dtMatrix[0].length; j++) {
-			if ((j in distinctByColumn.columnIndex) && !distinctByColumn.columnIndex[j].includes(dtMatrix[i][j])) {
+			if ((j in distinctByColumn.columnIndex) && !distinctByColumn.columnIndex[j].values.includes(dtMatrix[i][j])) {
 				// Max value from each column
-				distinctByColumn.columnIndex[j].push(dtMatrix[i][j]);
+				distinctByColumn.columnIndex[j].values.push(dtMatrix[i][j]);
 			}
 		}
 	}
@@ -74,16 +76,41 @@ function encodeOneHot(dtMatrix, encoder)	{
 		for (var j in encoder.columnIndex) {
 			j = parseInt(j);
 			var columnValue = dtMatrix[i][j];
-			for (var k = 0; k < encoder.columnIndex[j].length; k++){
+			for (var k = 0; k < encoder.columnIndex[j].values.length; k++){
 				//var indexTrue = encoder.columnIndex[j].indexOf(columnValue)
-				if(columnValue == encoder.columnIndex[j][k]){
+				if(columnValue == encoder.columnIndex[j].values[k]){
 					dtMatrix[i].push(1);
 				} else{
 					dtMatrix[i].push(0);
 				}
 			}
+
 			dtMatrix[i].splice(j,1); // remove old column
+			encoder.columnIndex[j].newColumns[0] =  encoder.columnIndex[j].values.length - dtMatrix[i].length;
+			encoder.columnIndex[j].newColumns[1] =  dtMatrix[i].length;
 		}
 	}
 	return dtMatrix;
 }
+/*
+function decodeOneHot(vector, encoder)	{
+	for (var i = 0; i < dtMatrix.length; i++) {
+		for (var j in encoder.columnIndex) {
+			j = parseInt(j);
+			var columnValue = dtMatrix[i][j];
+			for (var k = 0; k < encoder.columnIndex[j].values.length; k++){
+				//var indexTrue = encoder.columnIndex[j].indexOf(columnValue)
+				if(columnValue == encoder.columnIndex[j].values[k]){
+					dtMatrix[i].push(1);
+				} else{
+					dtMatrix[i].push(0);
+				}
+			}
+
+			dtMatrix[i].splice(j,1); // remove old column
+			encoder.columnIndex[j].newColumns[0] =  encoder.columnIndex[j].values.length - dtMatrix[i].length;
+			encoder.columnIndex[j].newColumns[1] =  dtMatrix[i].length;
+		}
+	}
+	return dtMatrix;
+}*/
