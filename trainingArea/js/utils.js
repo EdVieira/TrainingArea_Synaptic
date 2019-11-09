@@ -69,21 +69,23 @@ console.log('learn()');
 	//appendBody('script', outmatx);
 	alert('Training input data...');
 	var inpmatx = stringCSVtoMatrix('inpnotnorm');
+	/*
 	if (inputOneHotEncoding)	{
 		inpmatx = encodeOneHot(inpmatx, inputOneHotEncoding)
 	}
 	if (inputMinMax)	{
 		inpmatx = scale(inpmatx, inputMinMax);
-	}
+	}*/
 
 	alert('Training output data...');
 	var outmatx = stringCSVtoMatrix('outnotnorm');
+	/*
 	if (outputOneHotEncoding)	{
 		outmatx = encodeOneHot(outmatx, outputOneHotEncoding)
 	}
 	if (outputMinMax)	{
 		outmatx = scale(outmatx, outputMinMax);
-	}
+	}*/
 
 	// initiate a network element
 	if (!myNetwork)	{
@@ -118,12 +120,18 @@ function predict(n){
 	}*/
 	document.getElementById('res').innerHTML = '';
 	for (var i = 0; i < predictValues.length; i++) {
+		if(inputOneHotEncoding){
+			res = encodeOneHot([predictValues[i]],inputOneHotEncoding);
+		}
 		if(inputMinMax){
 			predictValues[i] = scaleVector(predictValues[i], inputMinMax);	
 		}
 		var res = n.activate(predictValues[i]);
 		if(outputMinMax){
 			res = unscale(res,outputMinMax);
+		}
+		if(outputOneHotEncoding){
+			res = decodeOneHot(res,outputOneHotEncoding);
 		}
 		document.getElementById('res').innerHTML += res.toString().replace(/,/g, '\t')+'\n';
 	}

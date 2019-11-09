@@ -13,9 +13,9 @@ function oneHotData(elem, target) {
 	}
 	//appendBody('script', dtx);
 	var oneHotEncoder = fitOneHotEncoder(datamatrix, target_cols);
-	oneHotEncoder.length = datamatrix[0].length + oneHotEncoder.colCount() - 1;
 	// Encode the data
 	datamatrix = encodeOneHot(datamatrix, oneHotEncoder)
+	oneHotEncoder.length = datamatrix[0].length;
 	// Write into target textarea
 	document.getElementById(target).value = "";
 	for (var i = 0; i < datamatrix.length; i++) {
@@ -45,7 +45,14 @@ function fitOneHotEncoder(dtMatrix, target_cols=[1,2])	{
 			}
 		}
 		return counter;
-	}
+	};
+	encoder.indexAsArray = function()	{
+		var indexes = [];
+		for (i in this.columnIndex){
+			indexes.push(parseInt(i));
+		}
+		return indexes;
+	};
 	return encoder
 }
 
@@ -84,33 +91,44 @@ function encodeOneHot(dtMatrix, encoder)	{
 					dtMatrix[i].push(0);
 				}
 			}
-
-			dtMatrix[i].splice(j,1); // remove old column
+		}
+	}
+	for (var i = 0; i < dtMatrix.length; i++) {
+		var removeCounter = 0;
+		for (var j in encoder.columnIndex) {
+			j = parseInt(j);
+			dtMatrix[i].splice(j - removeCounter ,1); // remove old column
 			encoder.columnIndex[j].newColumns[0] =  encoder.columnIndex[j].values.length - dtMatrix[i].length;
 			encoder.columnIndex[j].newColumns[1] =  dtMatrix[i].length;
+			removeCounter++;
 		}
 	}
 	return dtMatrix;
 }
-/*
-function decodeOneHot(vector, encoder)	{
-	for (var i = 0; i < dtMatrix.length; i++) {
-		for (var j in encoder.columnIndex) {
-			j = parseInt(j);
-			var columnValue = dtMatrix[i][j];
-			for (var k = 0; k < encoder.columnIndex[j].values.length; k++){
-				//var indexTrue = encoder.columnIndex[j].indexOf(columnValue)
-				if(columnValue == encoder.columnIndex[j].values[k]){
-					dtMatrix[i].push(1);
-				} else{
-					dtMatrix[i].push(0);
-				}
-			}
 
-			dtMatrix[i].splice(j,1); // remove old column
-			encoder.columnIndex[j].newColumns[0] =  encoder.columnIndex[j].values.length - dtMatrix[i].length;
-			encoder.columnIndex[j].newColumns[1] =  dtMatrix[i].length;
+function decodeOneHot(vector, encoder)	{
+	var columns = encoder.columnIndex;
+	var startSlice = vector.length - encoder.colCount();
+	var defaultSlice = vector.slice(0,startSlice);
+	var oneHotSlice = vector.slice(startSlice);
+	var lastSlice = 0;
+	for (var j in columns) {
+		j = parseInt(j);
+		var sliceTill = columns[j].values.length+lastSlice;
+		columns[j].results = oneHotSlice.slice(lastSlice, sliceTill);
+		lastSlice += columns[j].values.length;
+		// Lets get the label
+		var predictedIndex = 0;
+		for (var k in columns[j].results)	{
+			if (columns[j].results[k] > columns[j].results[predictedIndex])	{
+				predictedIndex = parseInt(k);
+			}
 		}
+		console.log(columns[j].results);
+		console.log(predictedIndex);
+		// Here we have our label to apply in the column!!
+		columns[j].predicted = columns[j].values[predictedIndex];
+		defaultSlice.push(columns[j].predicted);
 	}
-	return dtMatrix;
-}*/
+	return defaultSlice;
+}
