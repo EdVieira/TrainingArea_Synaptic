@@ -1,10 +1,10 @@
 
-function oneHotData(elem, target) {
-	console.log('oneHotdata('+elem+','+target+')');
+function oneHotData(datamatrix, target) {
+	//console.log('oneHotdata('+elem+','+target+')');
 
 	//var res = getMatrix(elem);
 	//var dtx = "datamatrix = "+res+";";
-	var datamatrix = stringCSVtoMatrix(elem);
+	//var datamatrix = stringCSVtoMatrix(elem);
 
 	var target_cols = prompt('Wich columns?\nFor choosing the first and the second column, e.g.:\n0,1');
 	target_cols = target_cols.trim().split(/,/g)
@@ -17,6 +17,7 @@ function oneHotData(elem, target) {
 	datamatrix = encodeOneHot(datamatrix, oneHotEncoder)
 	oneHotEncoder.length = datamatrix[0].length;
 	// Write into target textarea
+	/*
 	document.getElementById(target).value = "";
 	for (var i = 0; i < datamatrix.length; i++) {
 		if (i != 0) {
@@ -30,7 +31,7 @@ function oneHotData(elem, target) {
 			//xi = datamatrix[i][j];
 			//datamatrix[i][j] = (xi - minincolumn[j])/(maxincolumn[j]-minincolumn[j]);
 		}
-	}
+	}*/
 	alert('One Hot Encoding fitted!')
 	return oneHotEncoder;
 }
@@ -77,7 +78,7 @@ function getDistinctByColumns(dtMatrix, target_cols=[1,2])	{
 	}
 	return distinctByColumn;	
 }
-
+	
 function encodeOneHot(dtMatrix, encoder)	{
 	for (var i = 0; i < dtMatrix.length; i++) {
 		for (var j in encoder.columnIndex) {
@@ -128,7 +129,12 @@ function decodeOneHot(vector, encoder)	{
 		console.log(predictedIndex);
 		// Here we have our label to apply in the column!!
 		columns[j].predicted = columns[j].values[predictedIndex];
-		defaultSlice.push(columns[j].predicted);
+		var left = defaultSlice.slice(0,j);
+		var right = defaultSlice.slice(j);
+		left.push(columns[j].predicted);
+		defaultSlice = left.concat(right);
+		//defaultSlice.push(columns[j].predicted);
 	}
+
 	return defaultSlice;
 }

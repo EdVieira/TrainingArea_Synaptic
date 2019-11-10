@@ -1,15 +1,16 @@
-function scaleData(elem, target) {
-	console.log('scaledata('+elem+','+target+')');
+function scaleData(datamatrix, target) {
+	//console.log('scaledata('+elem+','+target+')');
 
 	//var res = getMatrix(elem);
 	//var dtx = "datamatrix = "+res+";";
-	var datamatrix = stringCSVtoMatrix(elem);
+	//var datamatrix = stringCSVtoMatrix(elem);
 
 	//appendBody('script', dtx);
 	var minMaxScaler = fitMinMaxScaler(datamatrix);
 	// Scale the data
 	datamatrix = scale(datamatrix, minMaxScaler)
 	// Write into target textarea
+	/*
 	document.getElementById(target).value = "";
 	for (var i = 0; i < datamatrix.length; i++) {
 		if (i != 0) {
@@ -21,7 +22,7 @@ function scaleData(elem, target) {
 				document.getElementById(target).value += "\t";
 			}
 		}
-	}
+	}*/
 	alert('minMaxScaler fitted!');
 	return minMaxScaler;
 }

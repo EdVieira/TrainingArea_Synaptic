@@ -69,23 +69,23 @@ console.log('learn()');
 	//appendBody('script', outmatx);
 	alert('Training input data...');
 	var inpmatx = stringCSVtoMatrix('inpnotnorm');
-	/*
+	
 	if (inputOneHotEncoding)	{
 		inpmatx = encodeOneHot(inpmatx, inputOneHotEncoding)
 	}
 	if (inputMinMax)	{
 		inpmatx = scale(inpmatx, inputMinMax);
-	}*/
+	}
 
 	alert('Training output data...');
 	var outmatx = stringCSVtoMatrix('outnotnorm');
-	/*
+	
 	if (outputOneHotEncoding)	{
 		outmatx = encodeOneHot(outmatx, outputOneHotEncoding)
 	}
 	if (outputMinMax)	{
 		outmatx = scale(outmatx, outputMinMax);
-	}*/
+	}
 
 	// initiate a network element
 	if (!myNetwork)	{
@@ -205,19 +205,29 @@ function loadNetworkFromJsonFile(evt) {
 
 document.getElementById('files').addEventListener('change', loadNetworkFromJsonFile, false);
 document.getElementById('minmaxinp').addEventListener('click', function () {
-	inputMinMax=scaleData('inpnotnorm','inpnotnorm');
+	inpmax = stringCSVtoMatrix('inpnotnorm');
+	if (inputOneHotEncoding)	{
+		inpmax = encodeOneHot(inpmax, inputOneHotEncoding)
+	}
+	inputMinMax=scaleData(inpmax,'inpnotnorm');
 	document.querySelector('#netlen').value = inputMinMax.maxincolumn.length+','+document.querySelector('#netlen').value;
 }, false);
 document.getElementById('minmaxout').addEventListener('click', function () {
-	outputMinMax=scaleData('outnotnorm','outnotnorm');
+	outmatx = stringCSVtoMatrix('outnotnorm');
+	if (outputOneHotEncoding)	{
+		outmatx = encodeOneHot(outmatx, outputOneHotEncoding)
+	}
+	outputMinMax=scaleData(outmatx,'outnotnorm');
 	document.querySelector('#netlen').value = document.querySelector('#netlen').value+','+outputMinMax.maxincolumn.length
 }, false);
 
 document.getElementById('onehotinp').addEventListener('click', function () {
-	inputOneHotEncoding=oneHotData('inpnotnorm','inpnotnorm');
+	var elem = 'inpnotnorm';
+	inputOneHotEncoding=oneHotData(stringCSVtoMatrix(elem),'inpnotnorm');
 	document.querySelector('#netlen').value = inputOneHotEncoding.length+','+document.querySelector('#netlen').value
 }, false);
 document.getElementById('onehotout').addEventListener('click', function () {
-	outputOneHotEncoding=oneHotData('outnotnorm','outnotnorm');
+	var elem = 'outnotnorm';
+	outputOneHotEncoding=oneHotData(stringCSVtoMatrix(elem),'outnotnorm');
 	document.querySelector('#netlen').value = document.querySelector('#netlen').value+','+outputOneHotEncoding.length
 }, false);
